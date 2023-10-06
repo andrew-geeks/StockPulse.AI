@@ -1,5 +1,5 @@
 # StockPulse.AI📈💸🤖
- Predictive engine to provide the sentiment of Indian Stock market, so investors👨‍💼💼 can take better decisions.
+ Predictive engine to provide the sentiment of **Indian Stock market**, so investors👨‍💼💼 can take better decisions.
 
 ## Features✨
 - Analyse the current sentiment of the entire market(live).
