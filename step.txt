@@ -1,0 +1,6 @@
+- Overall Sentiment
+1. Take Financial News from API/ by scraping data.
+2. Store the recieved/extracted data in a csv file.
+3. Take sentiment values/labels of the extracted data.
+4. Display the sentiment in the streamlit site.
+
