@@ -4,3 +4,6 @@
 3. Take sentiment values/labels of the extracted data.
 4. Display the sentiment in the streamlit site.
 
+
+# https://www.analyticsvidhya.com/blog/2021/12/different-methods-for-calculating-sentiment-score-of-text/
+# https://www.geeksforgeeks.org/python-sentiment-analysis-using-vader/

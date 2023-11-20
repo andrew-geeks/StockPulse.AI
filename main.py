@@ -3,8 +3,8 @@ import pandas as pd
 import os
 import requests
 from dotenv import load_dotenv
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-import json
 
 from transformers import pipeline
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
@@ -14,7 +14,7 @@ model = AutoModelForSequenceClassification.from_pretrained("KernAI/stock-news-di
 tokenizer = AutoTokenizer.from_pretrained("KernAI/stock-news-distilbert")
 
 classifier = pipeline("text-classification", model=model, tokenizer=tokenizer)
-#result = classifier("Global Digital MRO Market Size To Worth USD 3396 Million By 2032 | CAGR of 12.4%")
+sent = SentimentIntensityAnalyzer()
 
 
 load_dotenv()
@@ -22,14 +22,20 @@ load_dotenv()
 api_key = os.environ['API_KEY'] #api_key for marketaux
 
 def mainSentiment():
-    sentiment_label = []
+    sentiment_label = [] #stores the sentiment label for each news head-line
     sentiment_score = []
     
-    data = requests.get("https://api.marketaux.com/v1/news/all?filter_entities=true&language=en&countries=in&industries=&api_token="+api_key).json()
-    print(type(data))
-    for i in range(0,len(data['data'])-1):
+    data = requests.get("https://api.marketaux.com/v1/news/all?filter_entities=true&language=en&countries=in&api_token="+api_key).json()
+    #print(data)
+    for i in range(0,len(data['data'])):
+        print(data['data'][i]['title'])
         label = classifier(data['data'][i]['title'])[0]['label']
         sentiment_label.append(label)
+        for j in range(0,len(data['data'][i]["similar"])):
+            print(data['data'][i]["similar"][j]["title"])
+            label = classifier(data['data'][i]["similar"][j]["title"])[0]['label']
+            sentiment_label.append(label)
+        
     
     st.text(sentiment_label)
         
