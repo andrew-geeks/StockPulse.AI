@@ -1,5 +1,6 @@
 import streamlit as st 
-import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 import os
 import requests
 from dotenv import load_dotenv
@@ -23,8 +24,8 @@ load_dotenv()
 
 api_key = os.environ['API_KEY'] #api_key for marketaux
 
-
-def calulateSentiment(sLabel):
+#end-calculation of sentiment
+def calulateSentiment(sLabel,sScore):
     pcount=0
     necount=0
     nucount=0
@@ -37,7 +38,18 @@ def calulateSentiment(sLabel):
             nucount+=1
     
     sCount={'positive':pcount,'negative':necount,'neutral':nucount}
+    st.text("Average Sentiment Of market: "+str(round(np.average(sScore),2)*100)+"%")
     st.text(sCount)
+
+    size_of_groups=[pcount,necount,nucount]
+    labels=['Positive','Negative','Neutral']
+    colors = ['green','red','gray']
+    plt.pie(size_of_groups,colors=colors,labels=labels)
+    my_circle=plt.Circle( (0,0), 0.7, color='white')
+    p=plt.gcf()
+    p.gca().add_artist(my_circle)
+    st.pyplot(p)
+    
     
     
 
@@ -52,19 +64,18 @@ def mainSentiment():
     data = requests.get("https://api.marketaux.com/v1/news/all?filter_entities=true&language=en&countries=in&api_token="+api_key).json()
     #print(data)
     for i in range(0,len(data['data'])):
-        #print(data['data'][i]['title'])
         label = classifier(data['data'][i]['title'])[0]['label']
         sentiment_label.append(label)
-        sentiment_score.append(sent.polarity_scores(label))
+        sentiment_score.append(round(sent.polarity_scores(data['data'][i]['title'])['compound'],2))
         for j in range(0,len(data['data'][i]["similar"])):
             #print(data['data'][i]["similar"][j]["title"])
             label = classifier(data['data'][i]["similar"][j]["title"])[0]['label']
             sentiment_label.append(label)
             sentiment_score.append(round(sent.polarity_scores(data['data'][i]["similar"][j]["title"])["compound"],2))
 
-    st.text(sentiment_label)
-    calulateSentiment(sentiment_label)
-    st.text(sentiment_score)
+    #st.text(sentiment_label)
+    #st.text(sentiment_score)
+    calulateSentiment(sentiment_label,sentiment_score)
         
 
 st.set_page_config(page_title="StockPulse.AI📈🤖")
@@ -72,7 +83,6 @@ st.title("StockPulse.AI📈🤖")
 st.text("Data app to analyze the sentiment of Indian Stock market!")
 
 print(mainSentiment())
-#st.text_are(mainSentiment())
 
 
 
